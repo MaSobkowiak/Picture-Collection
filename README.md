@@ -29,6 +29,7 @@ It creates SqlLite database, and fills it up with informations about photos eg. 
     "APP_ID": "string",
     "APP_CODE": "string"
   },
+  "language": "PL",          -> Language for geotags
   "thumbnail_size": "int"    -> thumbnail expected size (smaller side od photo)
 }
 
