@@ -20,19 +20,15 @@ It creates SqlLite database, and fills it up with informations about photos eg. 
     "photos": "root directory of our photos.",
     "thumbnail": "name of subfolder for thumbnails.",
     "color": "name of subfolder for colors",
-    "backups": [
-      "directories for backup",
-      "directories for backup"
-    ]
+    "backups": ["directories for backup", "directories for backup"]
   },
   "geo": {
     "APP_ID": " HERE app id",
     "APP_CODE": "HERE app code"
   },
-  "language": "PL",          -
+  "language": "PL",
   "thumbnail_size": "thumbnail expected size (smaller side od photo)"
 }
-
 ```
 
 ## Used packages

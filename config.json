@@ -1,9 +1,9 @@
 {
   "paths": {
-    "photos": "C:/Users/masob/OneDrive/Photos",
+    "photos": "C:/Users/Test/Photos",
     "thumbnail": "thumbnails",
     "color": "colors",
-    "backups": ["C:/Users/masob/OneDrive/Backup3"]
+    "backups": ["C:/Users/Test/Backup"]
   },
   "geo": {
     "APP_ID": "",
