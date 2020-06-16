@@ -1,0 +1,14 @@
+{
+  "paths": {
+    "photos": "C:/Users/masob/OneDrive/Photos",
+    "thumbnail": "thumbnails",
+    "color": "colors",
+    "backups": ["C:/Users/masob/OneDrive/Backup3"]
+  },
+  "geo": {
+    "APP_ID": "",
+    "APP_CODE": ""
+  },
+  "language": "PL",
+  "thumbnail_size": 500
+}
