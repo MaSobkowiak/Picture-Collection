@@ -17,20 +17,20 @@ It creates SqlLite database, and fills it up with informations about photos eg. 
 ```json
 {
   "paths": {
-    "photos": "string",        -> root directory of our photos.
-    "thumbnail": "string",     -> name of subfolder for thumbnails, if not in config, thumbnails are not created.
-    "color": "string",         -> name of subfolder for colors, if not in config, colors are not created.
-    "backups": [               -> list of directories for backup
-      "string",
-      "string"
+    "photos": "root directory of our photos.",
+    "thumbnail": "name of subfolder for thumbnails.",
+    "color": "name of subfolder for colors",
+    "backups": [
+      "directories for backup",
+      "directories for backup"
     ]
   },
-  "geo": {                       -> HERE app id and app code
-    "APP_ID": "string",
-    "APP_CODE": "string"
+  "geo": {
+    "APP_ID": " HERE app id",
+    "APP_CODE": "HERE app code"
   },
-  "language": "PL",          -> Language for geotags
-  "thumbnail_size": "int"    -> thumbnail expected size (smaller side od photo)
+  "language": "PL",          -
+  "thumbnail_size": "thumbnail expected size (smaller side od photo)"
 }
 
 ```
