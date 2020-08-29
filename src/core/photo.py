@@ -51,7 +51,7 @@ class Photo:
 
     def check_name(self, path):
         r = re.compile(
-            r'([12][0-9]{3}-[0-1][0-9]-[0-3][0-9]_[0-2][0-9]\.[0-6][0-9]\.[0-6][0-9])(_[0-9])*(\.jpg|\.png|\.jpeg)$')
+            r'([12][0-9]{3}-[0-1][0-9]-[0-3][0-9]_[0-2][0-9]\.[0-6][0-9]\.[0-6][0-9])(_[0-9])*(\.jpg|\.png|\.jpeg|\.JPG|\.JPEG|\.PNG)$')
 
         if re.match(r, path.name):
             self.logger.info("Name match patern.")
@@ -59,9 +59,9 @@ class Photo:
 
         else:
             files = [f.name for f in path.parent.iterdir() if f.is_file()]
-
+            print(path.name)
             file_fomat = (
-                re.search(r'(\.jpg|\.png|\.jpeg)', path.name)).group(0)
+                re.search(r'(\.jpg|\.png|\.jpeg|\.JPG|\.JPEG|\.PNG)', path.name)).group(0)
 
             file_date = self.get_date_taken(path)
             filename = str(file_date + file_fomat)
@@ -137,7 +137,7 @@ class Photo:
     def get_date_from_name(self):
 
         r = re.compile(
-            r'([12][0-9]{3})-([0-1][0-9])-([0-3][0-9])_([0-2][0-9])\.([0-6][0-9])\.([0-6][0-9])(_[0-9])*(\.jpg|\.png|\.jpeg)')
+            r'([12][0-9]{3})-([0-1][0-9])-([0-3][0-9])_([0-2][0-9])\.([0-6][0-9])\.([0-6][0-9])(_[0-9])*(\.jpg|\.png|\.jpeg|\.JPG|\.JPEG|\.PNG)')
 
         date = re.search(r, self.name)
 
