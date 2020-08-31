@@ -1,7 +1,7 @@
 # Picture collection
 
 Picture collection is a Python programe for dealing and cataloging directories with pictures.
-It creates SqlLite database, and fills it up with informations about photos eg. date taken, dominant color, coorinates, country etc. It uses [HERE](https://www.here.com/platform/location-based-services) lociation services for retrieving data about geolocation. It can create mirror of our pictures directory in remote or local destination.
+It creates SqlLite database, and fills it up with informations about photos eg. date taken, dominant color, coorinates, country etc. It uses [HERE](https://www.here.com/platform/location-based-services) location services for retrieving data about geolocation. It can create mirror of our pictures directory in remote or local destination.
 
 ## Functionalities
 
