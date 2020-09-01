@@ -2,7 +2,7 @@ import argparse
 import logging
 from pathlib import Path
 from src import get_config, Folder
-from src import setup_logging, get_folders, Database, backup
+from src import setup_logging, get_folders, SQLite, MSSQL, backup
 
 
 def parseInput():
@@ -21,11 +21,18 @@ def parseInput():
 if __name__ == "__main__":
     setup_logging(level=logging.INFO)
 
-    db = Database(logging.getLogger("main"))
+    sqlite = SQLite(logging.getLogger("main"))
 
-    for db_folder in db.get_tables():
+    for db_folder in sqlite.get_tables():
         if db_folder not in [f.name for f in get_folders()]:
-            db.delete_table(db_folder)
+            sqlite.delete_table(db_folder)
+
+    if get_config("mssql") is not None:
+        mssql = MSSQL(logging.getLogger("main"))
+
+        for mssql_folder in mssql.get_tables():
+            if mssql_folder not in [f.name for f in get_folders()]:
+                mssql.delete_table(db_folder)
 
     for f in get_folders():
         folder = Folder(f.name)

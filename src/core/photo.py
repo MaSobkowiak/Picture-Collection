@@ -9,7 +9,7 @@ import os
 from sklearn.cluster import KMeans
 from collections import Counter
 from pathlib import Path
-from ..helpers import get_config, get_geotags, Database
+from ..helpers import get_config, get_geotags, SQLite, MSSQL
 
 
 class Photo:
@@ -45,9 +45,14 @@ class Photo:
         self.color = self.create_color()
 
     def add_to_db(self):
-        d = Database(self.logger)
-        d.add_photo(self.name, str(self.path_src), str(self.path_tum), str(self.path_col), self.width_src, self.height_src, self.width_tum, self.height_tum,
-                    self.year, self.month, self.day, self.color, ', '.join(map(str, self.coordinates)), self.country, self.city, self.label, self.path_src.parent.name)
+        sqlite = SQLite(self.logger)
+        sqlite.add_photo(self.name, str(self.path_src), str(self.path_tum), str(self.path_col), self.width_src, self.height_src, self.width_tum, self.height_tum,
+                         self.year, self.month, self.day, self.color, ', '.join(map(str, self.coordinates)), self.country, self.city, self.label, self.path_src.parent.name)
+
+        if get_config("mssql") is not None:
+            mssql = MSSQL(self.logger)
+            mssql.add_photo(self.name, str(self.path_src), str(self.path_tum), str(self.path_col), self.width_src, self.height_src, self.width_tum, self.height_tum,
+                            self.year, self.month, self.day, self.color, ', '.join(map(str, self.coordinates)), self.country, self.city, self.label, self.path_src.parent.name)
 
     def check_name(self, path):
         r = re.compile(

@@ -5,7 +5,7 @@ from ._config import get_config
 from pathlib import Path
 
 
-class Database:
+class SQLite:
     """Class for db"""
 
     def __init__(self, logger):
@@ -19,8 +19,13 @@ class Database:
         """
 
         try:
-            conn = sqlite3.connect(str(
-                Path(get_config("paths")["photos"], "photosDB.db")), isolation_level=None)
+            if get_config("sqlite") is not None:
+                conn = sqlite3.connect(str(
+                    Path(get_config("sqlite")["path"])), isolation_level=None)
+            else:
+                conn = sqlite3.connect(str(
+                    Path(get_config("paths")["photos"], "pictures.db")), isolation_level=None)
+
             self.logger.info("Connected to db version: " +
                              sqlite3.version + ".")
             return conn

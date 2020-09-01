@@ -3,11 +3,22 @@
     "photos": "C:/Users/Test/Photos",
     "thumbnail": "thumbnails",
     "color": "colors",
-    "backups": ["C:/Users/Test/Backup"]
+    "backups": [
+      "C:/Users/Test/Backup"
+    ]
   },
   "geo": {
     "APP_ID": "",
     "APP_CODE": ""
+  },
+  "mssql": {
+    "host": "127.0.0.1",
+    "port": 1433,
+    "user": "user",
+    "password": "pswdx"
+  },
+  "sqlite": {
+    "path": "C:/Users/Test/Photos/pictures.db"
   },
   "language": "PL",
   "thumbnail_size": 500

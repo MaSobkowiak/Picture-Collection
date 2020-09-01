@@ -1,7 +1,7 @@
 from pathlib import Path
 import time
 import logging
-from ..helpers import Database, get_config
+from ..helpers import SQLite, MSSQL, get_config
 from .photo import Photo
 
 
@@ -12,7 +12,7 @@ class Folder:
             str(self.__class__.__name__ + ": " + name))
 
         self.name = name
-        self.db = Database(self.logger)
+
         self.thumbnail_size = None
 
         self.path_photos = Path(get_config("paths")["photos"] + "/" + name)
@@ -23,7 +23,15 @@ class Folder:
         self.path_colors = Path(get_config("paths")["photos"] +
                                 "/" + name + "/" + get_config("paths")["color"])
 
-        self.db.create_table(name)
+        self.sqlite = SQLite(self.logger)
+        self.sqlite.create_table(name)
+
+        if get_config("mssql") is not None:
+            self.mssql = MSSQL(self.logger)
+            self.mssql.create_table(name)
+        else:
+            self.mssql = None
+
         self.create_folders()
 
         self.clean_folders()
@@ -45,7 +53,7 @@ class Folder:
         list_of_photos = self.get_list_of_files(self.path_photos)
         list_of_tum = self.get_list_of_files(self.path_thumbnails)
         list_of_col = self.get_list_of_files(self.path_colors)
-        list_of_db = self.db.get_names(self.name)
+        list_of_sqlite = self.sqlite.get_names(self.name)
 
         for tum in list_of_tum:
             if tum.name not in [src.name for src in list_of_photos]:
@@ -57,9 +65,15 @@ class Folder:
                 col.unlink()
                 self.logger.info("Deleted color: " + str(col))
 
-        for d in list_of_db:
+        for d in list_of_sqlite:
             if d not in [src.name for src in list_of_photos]:
-                self.db.delete_photo(d, self.name)
+                self.sqlite.delete_photo(d, self.name)
+
+        if self.mssql is not None:
+            list_of_mssql = self.mssql.get_names(self.name)
+            for d in list_of_mssql:
+                if d not in [src.name for src in list_of_photos]:
+                    self.mssql.delete_photo(d, self.name)
 
     def create_folders(self):
 
