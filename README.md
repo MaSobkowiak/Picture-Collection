@@ -12,6 +12,7 @@ It creates SqlLite database, and fills it up with informations about photos eg. 
 - Using [HERE](https://www.here.com/platform/location-based-services) converts geolocation metadata into redable informations eg. City, Country, Label
 - Creating thumbnail for every photo.
 - Creating backup of root in multiple, remote or local directiories.
+- Normalising file names. 
 
 ## Config
 
