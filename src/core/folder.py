@@ -1,7 +1,7 @@
 from pathlib import Path
 import time
 import logging
-from ..helpers import SQLite, MSSQL, get_config
+from ..helpers import SQLite, MSSQL, get_config, get_folder_info, get_geotags
 from .photo import Photo
 
 
@@ -23,6 +23,11 @@ class Folder:
         self.path_colors = Path(get_config("paths")["photos"] +
                                 "/" + name + "/" + get_config("paths")["color"])
 
+        self.title, self.description, self.coordinates = get_folder_info(self.path_photos)
+        
+        self.country, self.city, self.label = get_geotags(
+                self.coordinates, self.logger)
+
         self.sqlite = SQLite(self.logger)
         self.sqlite.create_table(name)
 
@@ -32,8 +37,8 @@ class Folder:
         else:
             self.mssql = None
 
+        self.add_to_db()
         self.create_folders()
-
         self.clean_folders()
 
     def get_list_of_files(self, path):
@@ -81,3 +86,8 @@ class Folder:
         self.path_colors.mkdir(parents=True, exist_ok=True)
 
         self.logger.info("Subfolders checked.")
+
+    def add_to_db(self):
+        sqlite = SQLite(self.logger)
+        sqlite.add_folder(self.name, self.title, self.description,
+         ', '.join(map(str, self.coordinates)), self.country, self.city, self.label)

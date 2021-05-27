@@ -23,9 +23,12 @@ if __name__ == "__main__":
 
     sqlite = SQLite(logging.getLogger("main"))
 
+    sqlite.create_folders_table()
+
     for db_folder in sqlite.get_tables():
         if db_folder not in [f.name for f in get_folders()]:
             sqlite.delete_table(db_folder)
+            sqlite.delete_folder(db_folder)
 
     if get_config("mssql") is not None:
         mssql = MSSQL(logging.getLogger("main"))
