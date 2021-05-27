@@ -65,6 +65,27 @@ class SQLite:
         except sqlite3.Error as e:
             self.logger.error("Can't create table: " + str(e))
 
+    def create_folders_table(self):
+        """ create a table from the create_table_sql statement """
+
+        sql = """CREATE TABLE IF NOT EXISTS 'FOLDERS' (
+                                id integer PRIMARY KEY,
+                                name text NOT NULL,
+                                title text,
+                                description text,
+                                coordinates text,
+                                country text,
+                                city text,
+                                label text
+                                );"""
+
+        try:
+            c = self.connection.cursor()
+            c.execute(sql)
+            self.logger.info("Table for folders in db checked.")
+        except sqlite3.Error as e:
+            self.logger.error("Can't create table for folders: " + str(e))
+
     def get_names(self, folder):
 
         sql = """SELECT name FROM '{0}'""".format(folder)
@@ -97,6 +118,41 @@ class SQLite:
 
         except Error as e:
             self.logger.error("Error checking db: " + str(e))
+    
+    def check_if_folder_exists(self, name):
+
+        sql = """SELECT * FROM 'FOLDERS' WHERE name='{0}' """.format(name)
+
+        try:
+            c = self.connection.cursor()
+            c.execute(sql)
+            rows = c.fetchall()
+            if rows:
+                return True
+            else:
+                return False
+
+        except Error as e:
+            self.logger.error("Error checking db: " + str(e))
+    
+    def add_folder(self, name, title, description, coordinates, country, city, label):
+        """ Create new folder entry. Params: Photo object, folder name that foto is in"""
+
+        photo_text = (name, title, description, coordinates, country, city, label)
+
+        sql = """ INSERT INTO 'FOLDERS'(name, title, description, 
+                            coordinates, country, city, label)
+                  VALUES(?,?,?,?,?,?,?) """
+
+        try:
+            if not self.check_if_folder_exists(name):
+                c = self.connection.cursor()
+                c.execute(sql, photo_text)
+                self.logger.info("Added folder to db: " + str(name))
+            else:
+                self.logger.info("Folder exists in db: " + str(name))
+        except Error as e:
+            self.logger.error("Cant folder photo: " + str(e))
 
     def add_photo(self, name, path_src, path_tum, path_col, width_src, height_src, width_tum, height_tum, year, month, day, color, coordinates, country, city, label, folder, base64_src, base64_tum):
         """ Create new photo entry. Params: Photo object, folder name that foto is in"""
@@ -136,6 +192,22 @@ class SQLite:
         except Error as e:
             self.logger.error("Cant delete photo from db: " + str(e))
 
+    def delete_folder(self, name):
+        """ Delete folder from db by name"""
+
+        sql = """ DELETE FROM 'FOLDERS' WHERE name = '{0}' """.format(name)
+
+        try:
+            if self.check_if_folder_exists(name):
+                c = self.connection.cursor()
+                c.execute(sql)
+                self.logger.info(
+                    "Deleted folder from db, no longer exists")
+            else:
+                self.logger.info("Can't delete folder, don't exists in db")
+        except Error as e:
+            self.logger.error("Cant delete folder from db: " + str(e))
+
     def delete_table(self, folder):
         """ Delete table from db """
 
@@ -152,7 +224,7 @@ class SQLite:
     def get_tables(self):
         """ Get all tables from db"""
 
-        sql = """SELECT name FROM sqlite_master WHERE type ='table' AND name NOT LIKE 'sqlite_%';"""
+        sql = """SELECT name FROM sqlite_master WHERE type ='table' AND name NOT LIKE 'sqlite_%' AND name NOT LIKE 'FOLDERS';"""
 
         try:
             c = self.connection.cursor()
