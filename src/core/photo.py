@@ -9,6 +9,7 @@ import os
 from sklearn.cluster import KMeans
 from collections import Counter
 from pathlib import Path
+from base64 import b64encode
 from ..helpers import get_config, get_geotags, SQLite, MSSQL
 
 
@@ -44,10 +45,14 @@ class Photo:
 
         self.color = self.create_color()
 
+        self.base64_src = "" #self.get_base64_string(self.path_src)
+
+        self.base64_tum = self.get_base64_string(self.path_tum)
+
     def add_to_db(self):
         sqlite = SQLite(self.logger)
         sqlite.add_photo(self.name, str(self.path_src), str(self.path_tum), str(self.path_col), self.width_src, self.height_src, self.width_tum, self.height_tum,
-                         self.year, self.month, self.day, self.color, ', '.join(map(str, self.coordinates)), self.country, self.city, self.label, self.path_src.parent.name)
+                         self.year, self.month, self.day, self.color, ', '.join(map(str, self.coordinates)), self.country, self.city, self.label, self.path_src.parent.name, self.base64_src, self.base64_tum)
 
         if get_config("mssql") is not None:
             mssql = MSSQL(self.logger)
@@ -110,6 +115,18 @@ class Photo:
             date_time = datetime.strptime(exifTime, '%Y:%m:%d %H:%M:%S')
 
         return date_time.strftime("%Y-%m-%d_%H.%M.%S")
+
+    def get_base64_string(self, path):
+        """
+        Get base64 string from photo
+        """
+        with open(path, "rb") as image_file:
+            base64_bytes = b64encode(image_file.read())
+
+            base64_string = base64_bytes.decode('utf-8')
+
+        self.logger.info("Generated base64 string.")
+        return base64_string
 
     def get_metadata(self, parameter, path=None,):
         """

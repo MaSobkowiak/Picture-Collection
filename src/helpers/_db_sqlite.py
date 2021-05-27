@@ -49,6 +49,8 @@ class SQLite:
                                 year integer NOT NULL,
                                 month integer NOT NULL,
                                 day integer NOT NULL,
+                                base64_src text NOT NULL,
+                                base64_tum text NOT NULL,
                                 color real,
                                 coordinates text,
                                 country text,
@@ -96,17 +98,17 @@ class SQLite:
         except Error as e:
             self.logger.error("Error checking db: " + str(e))
 
-    def add_photo(self, name, path_src, path_tum, path_col, width_src, height_src, width_tum, height_tum, year, month, day, color, coordinates, country, city, label, folder):
+    def add_photo(self, name, path_src, path_tum, path_col, width_src, height_src, width_tum, height_tum, year, month, day, color, coordinates, country, city, label, folder, base64_src, base64_tum):
         """ Create new photo entry. Params: Photo object, folder name that foto is in"""
 
         photo_text = (name, path_src, path_tum, path_col, width_src, height_src, width_tum,
-                      height_tum, year, month, day, color, coordinates, country, city, label)
+                      height_tum, year, month, day, base64_src, base64_tum, color, coordinates, country, city, label)
 
         sql = """ INSERT INTO '{0}'(name, path_src, path_tum, path_col,
                                      width_src, height_src, width_tum, height_tum,
-                                      year, month, day,
+                                      year, month, day, base64_src, base64_tum,
                                       color, coordinates, country, city, label)
-                  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """.format(folder)
+                  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) """.format(folder)
 
         try:
             if not self.check_if_photo_exists(name, folder):
