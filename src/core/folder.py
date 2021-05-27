@@ -40,7 +40,7 @@ class Folder:
         """
         Return list of fils from folder
         """
-        return ([photo for photo in path.iterdir() if photo.is_file()])
+        return [f for f in path.iterdir() if f.is_file() and f.name.lower().endswith(('.png', '.jpg', '.jpeg'))]
 
     def process_files(self):
 
