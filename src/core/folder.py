@@ -86,8 +86,14 @@ class Folder:
         self.path_colors.mkdir(parents=True, exist_ok=True)
 
         self.logger.info("Subfolders checked.")
+    
+    def format_coordinates(self):
+        if self.coordinates:
+            return', '.join(map(str, self.coordinates))
+        else: 
+            return None
 
     def add_to_db(self):
         sqlite = SQLite(self.logger)
         sqlite.add_folder(self.name, self.title, self.description,
-         ', '.join(map(str, self.coordinates)), self.country, self.city, self.label)
+          self.format_coordinates(), self.country, self.city, self.label)

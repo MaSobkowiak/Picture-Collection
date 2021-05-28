@@ -52,12 +52,18 @@ class Photo:
     def add_to_db(self):
         sqlite = SQLite(self.logger)
         sqlite.add_photo(self.name, str(self.path_src), str(self.path_tum), str(self.path_col), self.width_src, self.height_src, self.width_tum, self.height_tum,
-                         self.year, self.month, self.day, self.color, ', '.join(map(str, self.coordinates)), self.country, self.city, self.label, self.path_src.parent.name, self.base64_src, self.base64_tum)
+                         self.year, self.month, self.day, self.color, self.format_coordinates(), self.country, self.city, self.label, self.path_src.parent.name, self.base64_src, self.base64_tum)
 
         if get_config("mssql") is not None:
             mssql = MSSQL(self.logger)
             mssql.add_photo(self.name, str(self.path_src), str(self.path_tum), str(self.path_col), self.width_src, self.height_src, self.width_tum, self.height_tum,
-                            self.year, self.month, self.day, self.color, ', '.join(map(str, self.coordinates)), self.country, self.city, self.label, self.path_src.parent.name)
+                            self.year, self.month, self.day, self.color, self.format_coordinates(), self.country, self.city, self.label, self.path_src.parent.name)
+
+    def format_coordinates(self):
+        if self.coordinates:
+            return', '.join(map(str, self.coordinates))
+        else: 
+            return None
 
     def check_name(self, path):
         r = re.compile(
