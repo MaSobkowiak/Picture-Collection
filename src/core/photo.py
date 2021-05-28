@@ -75,7 +75,6 @@ class Photo:
 
         else:
             files = [f.name for f in path.parent.iterdir() if f.is_file()]
-            print(path.name)
             file_fomat = (
                 re.search(r'(\.jpg|\.png|\.jpeg|\.JPG|\.JPEG|\.PNG)', path.name)).group(0)
 
@@ -84,14 +83,13 @@ class Photo:
             i = 1
 
             while filename in files:
-
-                c_img = Image.open(str(path))
-                f_img = Image.open(Path(str(path.parent) + "/" + filename))
-
-                dif_img = ImageChops.difference(c_img, f_img)
+                
+                with Image.open(str(path)) as c_img:
+                    with Image.open(Path(path.parent, filename)) as f_img:
+                        dif_img = ImageChops.difference(c_img, f_img)
 
                 if dif_img.getbbox() is None:
-                    Path(str(path.parent) + "/" + filename).unlink()
+                    Path(path.parent, filename).unlink()
                     self.logger.info("Deleted copy of photo.")
                     break
                 else:
