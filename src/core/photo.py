@@ -10,6 +10,7 @@ from sklearn.cluster import KMeans
 from collections import Counter
 from pathlib import Path
 from base64 import b64encode
+from io import BytesIO
 from ..helpers import get_config, get_geotags, SQLite, MSSQL
 
 
@@ -38,14 +39,15 @@ class Photo:
         self.country, self.city, self.label = get_geotags(
             self.coordinates, self.logger)
 
-        self.width_src, self.height_src = self.get_photo_size()
+        # self.width_src, self.height_src = self.get_photo_size()
+        self.width_src, self.height_src = self.get_source_size()
         self.width_tum, self.height_tum = self.get_thumbnail_size()
 
         self.create_thumbnail()
 
         self.color = self.create_color()
 
-        self.base64_src = "" #self.get_base64_string(self.path_src)
+        self.base64_src = self.get_compressed_base64_src()
 
         self.base64_tum = self.get_base64_string(self.path_tum)
 
@@ -238,6 +240,61 @@ class Photo:
             height = thumbnail_size
             width = int(self.width_src / ratio)
 
+        size = (width, height)
+        return size
+
+    def get_compressed_base64_src(self):
+        """
+        Create compressed size of base64 of source photo. If not in config original size is being processed.
+        """
+        file_fomat = (
+                re.search(r'(jpg|png|jpeg|JPG|JPEG|PNG)', self.name)).group(0)
+
+        if file_fomat.upper() == 'JPG':
+            file_fomat = 'JPEG'
+
+        img = Image.open(self.path_src)
+        img = img.resize(
+                [self.width_src, self.height_src], Image.ANTIALIAS)
+
+        if self.get_metadata("orientation") in (6, 5):
+            img = img.rotate(-90, expand=True)
+
+        elif self.get_metadata("orientation") in (7, 8):
+            img = img.rotate(90, expand=True)
+
+        buff = BytesIO()
+        img.save(buff, format=file_fomat)  
+        base64_bytes = b64encode(buff.getvalue())
+
+        base64_string = base64_bytes.decode('utf-8')
+
+        self.logger.info("Source base64 created")
+
+        return base64_string
+
+    def get_source_size(self):
+        """
+        Return smaller size of source processed photo with preserved ratio.
+            :return tuple (width,height):
+        """
+
+        size = self.get_photo_size()
+
+        source_size = int(get_config("source_size"))
+        if source_size:
+            if size[0] < size[1]:
+                ratio = size[0] / source_size
+                width = source_size
+                height = int(size[1] / ratio)
+            else:
+                ratio = size[1] / source_size
+                height = source_size
+                width = int(size[0] / ratio)
+        else:
+            width = size[0]
+            height = size[1]
+            
         size = (width, height)
         return size
 
